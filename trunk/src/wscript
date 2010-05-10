@@ -1,0 +1,30 @@
+VERSION= '0.0.4'
+APPNAME= 'minise'
+
+srcdir= '.'
+blddir= 'bin'
+
+def set_options(ctx):
+  ctx.tool_options('compiler_cxx')
+    
+def configure(ctx):
+  ctx.check_tool('compiler_cxx')
+  ctx.env.CXXFLAGS += ['-O2', '-Wall', '-g']
+
+def build(bld):
+  task1= bld(features='cxx cshlib',
+       source       = 'miniseBase.cpp invertedFile.cpp quickSearch.cpp suffixArray.cpp compressedBlock.cpp varByte.cpp riceCode.cpp', 
+       name         = 'minise',
+       target       = 'minise',
+       includes     = '.')
+  task2= bld(features='cxx cprogram',
+       source       = 'miniseBuild.cpp',
+       target       ='minise_build',
+       includes     = '.',
+       uselib_local = 'minise')
+  task3= bld(features='cxx cprogram',
+       source       = 'miniseSearch.cpp',
+       target       ='minise_search',
+       includes     = '.',
+       uselib_local = 'minise')
+  bld.install_files('${PREFIX}/include/minise', bld.path.ant_glob('*.hpp'))
